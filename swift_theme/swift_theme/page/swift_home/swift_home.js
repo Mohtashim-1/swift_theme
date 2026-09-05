@@ -58,13 +58,72 @@ if (frappe.router && frappe.router.on && !frappe.router.__swift_home_hook) {
 	});
 }
 
-/* The hues the mock-ups use across the grid, in their order. Chips are picked
-   from here rather than from the theme accent so the grid reads as a set of
-   distinct apps, which is the whole point of the picture. */
+/* Desk-style chips: distinct by module family, quieter than the neon mock-ups.
+   A hash fallback keeps unknown tiles stable across visits. */
 const TILE_COLORS = [
-	"#4b5563", "#ec4899", "#0ea5e9", "#4f46e5", "#f59e0b", "#3b82f6",
-	"#2563eb", "#8b5cf6", "#10b981", "#6366f1", "#0891b2", "#14b8a6",
+	"#5b6b95", "#4f8a82", "#4a7fb5", "#6a8a6e", "#b08a4a", "#6b7aa8",
+	"#7a6e95", "#5a8aa3", "#8a6e6e", "#4f7c8a", "#6e7a5a", "#7a6b58",
 ];
+
+/* Lucide names that do not exist on Frappe's sprite, mapped to ones that do.
+   ERPNext Desktop Icon records store module keys (project, sell, stock). */
+const ICON_ALIASES = {
+	project: "rocket",
+	accounting: "book-open",
+	sell: "tag",
+	stock: "package",
+	assets: "briefcase",
+	buying: "shopping-cart",
+	quality: "badge-check",
+	organization: "factory",
+	company: "building-2",
+	"non-profit": "heart",
+	integration: "unplug",
+	website: "globe",
+	setting: "settings",
+	expenses: "receipt",
+	customer: "tag",
+	"getting-started": "rocket",
+	"money-coins-1": "wallet",
+	"table_2": "table-2",
+	table_2: "table-2",
+};
+
+/* Screenshot language: same family shares a glyph. Label match first, then
+   the stored icon name, then a letter. */
+const GLYPH_FOR = {
+	projects: "rocket",
+	"project management": "rocket",
+	timesheet: "timer",
+	task: "rocket",
+	tasks: "rocket",
+	customer: "tag",
+	customers: "tag",
+	selling: "tag",
+	"sales order": "tag",
+	invoicing: "book-open",
+	"sales invoice": "book-open",
+	accounting: "book-open",
+	"expense claim": "users",
+	expenses: "users",
+	employee: "users",
+	people: "users",
+	recruitment: "users",
+	todo: "calendar",
+	"to do": "calendar",
+	explore: "telescope",
+	insights: "telescope",
+	buying: "shopping-cart",
+	stock: "package",
+	manufacturing: "factory",
+	quality: "badge-check",
+	assets: "briefcase",
+	payments: "dollar-sign",
+	banking: "landmark",
+	payroll: "wallet",
+	leaves: "calendar",
+	"financial reports": "chart-column",
+};
 
 class SwiftHome {
 	constructor(page) {
@@ -701,22 +760,31 @@ class SwiftHome {
 		});
 	}
 
-	/* The mock-ups give every tile its own coloured chip, and the desk does not
-	   hand us one: `bg_color` exists on a Desktop Icon but is unset on a stock
-	   site, and most icons are a monochrome sprite glyph. App icons that ship
-	   their own logo (Frappe CRM, Frappe HR, the Framework mark) are already
-	   coloured and are left alone.
-
-	   So where the site has not chosen a colour, one is derived from the label.
-	   A hash rather than a position, because position changes the moment an app
-	   is installed or a permission changes the list - and a tile that changes
-	   colour between two visits reads as a different tile. */
+	/* Coloured chips, quieter than the neon desk mock-ups. A hex `bg_color` on
+	   the Desktop Icon wins; named values like "blue"/"gray" are Frappe's own
+	   two-tone palette and are ignored so the grid can still vary by family. */
 	tile_color(icon) {
-		if (icon.bg_color) return icon.bg_color;
+		const custom = (icon.bg_color || "").trim();
+		if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(custom)) return custom;
+		const family = this.tile_family(icon.label);
+		if (family) return family;
 		const label = icon.label || "";
 		let h = 0;
 		for (let i = 0; i < label.length; i++) h = (h * 31 + label.charCodeAt(i)) >>> 0;
 		return TILE_COLORS[h % TILE_COLORS.length];
+	}
+
+	tile_family(label) {
+		const key = (label || "").toLowerCase();
+		if (/project|timesheet|task/.test(key)) return "#5b6b95";
+		if (/customer|selling|sales order|crm/.test(key)) return "#4f8a82";
+		if (/invoice|invoicing|accounting|tax|budget/.test(key)) return "#4a7fb5";
+		if (/employee|people|expense|payroll|recruit|hr/.test(key)) return "#6a8a6e";
+		if (/todo|to-do|to do|leave|calendar/.test(key)) return "#b08a4a";
+		if (/explore|insight|quality/.test(key)) return "#6b7aa8";
+		if (/stock|buying|purchase|asset/.test(key)) return "#5a8aa3";
+		if (/manufactur|factory/.test(key)) return "#7a6b58";
+		return null;
 	}
 
 	/* The destination of a tile, resolved the way Frappe's own launcher
@@ -785,10 +853,23 @@ class SwiftHome {
 			const src = frappe.utils.escape_html(icon.icon_image || icon.logo_url);
 			return `<img src="${src}" alt="" loading="lazy">`;
 		}
-		if (icon.icon) return frappe.utils.icon(icon.icon, "md", "", "", "", true);
+		const name = this.glyph_for(icon);
+		if (name) return frappe.utils.icon(name, "lg", "", "", "", true);
 		return `<span class="swift-home-app-letter">${frappe.utils.escape_html(
 			(icon.label || "?").charAt(0).toUpperCase()
 		)}</span>`;
+	}
+
+	glyph_for(icon) {
+		const label = (icon.label || "").toLowerCase().trim();
+		if (GLYPH_FOR[label]) return GLYPH_FOR[label];
+		for (const [needle, glyph] of Object.entries(GLYPH_FOR)) {
+			if (label.includes(needle)) return glyph;
+		}
+		let raw = (icon.icon || "").trim();
+		if (!raw) return "";
+		raw = ICON_ALIASES[raw] || ICON_ALIASES[raw.replace(/_/g, "-")] || raw.replace(/_/g, "-");
+		return raw;
 	}
 
 	render_cards(cards) {

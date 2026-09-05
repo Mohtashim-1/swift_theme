@@ -20,3 +20,4 @@ import "./swift-sidebar.js";
 import "./swift-focus.js";
 import "./swift-perf.js";
 import "./swift-sounds.js";
+import "./swift-desktop-icons.js";

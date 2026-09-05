@@ -1238,4 +1238,38 @@ html[data-swift-themed]:not([data-swift-backdrop="none"])
   background-color: transparent;
 }
 
+/* Native desk launcher: Solid tiles, quieter than the neon mock-ups.
+   Official app SVGs are all the same blue; a light hue shift by tile keeps
+   families distinct without touching the page theme. */
+html[data-swift-themed] .desktop-icon .icon-container {
+  border-radius: 16px;
+}
+
+html[data-swift-themed] .desktop-icon .icon-container img.app-icon {
+  filter: saturate(0.72);
+}
+
+html[data-swift-themed] .desktop-icon[data-family="projects"] .icon-container img.app-icon {
+  filter: hue-rotate(-18deg) saturate(0.7);
+}
+html[data-swift-themed] .desktop-icon[data-family="sales"] .icon-container img.app-icon {
+  filter: hue-rotate(148deg) saturate(0.68);
+}
+html[data-swift-themed] .desktop-icon[data-family="finance"] .icon-container img.app-icon {
+  filter: hue-rotate(0deg) saturate(0.7);
+}
+html[data-swift-themed] .desktop-icon[data-family="hr"] .icon-container img.app-icon {
+  filter: hue-rotate(118deg) saturate(0.65);
+}
+html[data-swift-themed] .desktop-icon[data-family="tasks"] .icon-container img.app-icon {
+  filter: hue-rotate(32deg) saturate(0.72);
+}
+html[data-swift-themed] .desktop-icon[data-family="explore"] .icon-container img.app-icon {
+  filter: hue-rotate(-28deg) saturate(0.62);
+}
+html[data-swift-themed] .desktop-icon[data-family="ops"] .icon-container img.app-icon {
+  filter: hue-rotate(168deg) saturate(0.62);
+}
+
+
 

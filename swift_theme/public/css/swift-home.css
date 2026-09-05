@@ -149,23 +149,25 @@
 
 .swift-home-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px 12px;
+  justify-items: center;
 }
 
 .swift-home .swift-home-app {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 22px 12px 18px;
-  border: 1px solid var(--swift-home-border);
-  border-radius: var(--swift-radius-lg, 14px);
-  background: var(--swift-home-surface);
+  gap: 10px;
+  width: 120px;
+  padding: 14px 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background: transparent;
   color: var(--swift-home-ink-2);
   text-align: center;
   text-decoration: none;
-  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 /* A tile is an <a>, and the desk's own
@@ -181,34 +183,40 @@
 }
 
 .swift-home .swift-home-app:hover {
-  border-color: var(--swift-home-accent);
-  transform: translateY(-2px);
-  box-shadow: var(--swift-shadow-md, 0 8px 24px -14px rgba(0, 0, 0, 0.35));
+  background: var(--swift-home-accent-soft);
+  transform: none;
+  box-shadow: none;
   color: var(--swift-home-ink-2);
   text-decoration: none;
+}
+
+.swift-home .swift-home-app:hover .swift-home-app-icon {
+  transform: scale(1.06);
 }
 
 .swift-home-app-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 13px;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
   background: var(--swift-home-accent-soft);
   color: var(--swift-home-accent);
   overflow: hidden;
+  transition: transform 0.15s ease;
 }
 
 .swift-home-app-icon img {
-  width: 26px;
-  height: 26px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
 }
 
 .swift-home-app-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
+  stroke-width: 1.75;
 }
 
 .swift-home-app-letter {
@@ -595,8 +603,9 @@ body.swift-home-open .swift-home {
 }
 
 .swift-home-app.has-logo .swift-home-app-icon {
-  background: var(--swift-home-accent-soft);
+  background: transparent;
   color: var(--swift-home-accent);
+  padding: 0;
 }
 
 /* ---- background artwork ----
@@ -810,8 +819,8 @@ html[data-swift-home-preset="aurora"] body.swift-home-open .swift-home-grid,
 html[data-swift-home-preset="dune"] body.swift-home-open .swift-home-grid,
 html[data-swift-home-preset="nebula"] body.swift-home-open .swift-home-grid,
 html[data-swift-home-preset="abyss"] body.swift-home-open .swift-home-grid {
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px 14px;
 }
 
 /* ---- 5. Pulse — figures across the top, then "Your Apps" ---- */
@@ -850,19 +859,19 @@ html[data-swift-home-preset="pulse"] body.swift-home-open .swift-home-card-row {
 }
 
 html[data-swift-home-preset="pulse"] body.swift-home-open .swift-home-grid {
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px 12px;
 }
 
 html[data-swift-home-preset="pulse"] body.swift-home-open .swift-home-app {
-  padding: 16px 10px 14px;
+  padding: 12px 8px 10px;
   gap: 10px;
 }
 
 html[data-swift-home-preset="pulse"] body.swift-home-open .swift-home-app-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
 }
 
 /* ---- 6. Horizon — a wide welcome and nothing in the way of the apps ---- */
@@ -961,9 +970,9 @@ html[data-swift-home-preset="eclipse"] body.swift-home-open .swift-home-app {
 }
 
 html[data-swift-home-preset="eclipse"] body.swift-home-open .swift-home-app-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
 }
 
 /* ---- 8. Honeycomb — a headline beside a comb of hexagons ---- */
